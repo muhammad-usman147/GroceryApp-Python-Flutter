@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+
+<div class="mw6 center pa3 sans-serif">
+
+    <h1> Driver: {{ drivers.name }}</h1>
+    <h2> License: {{ drivers.license }} </h2>
+   <h3>------------------------------</h3>
+    {% for v in vehicles %}
+    <div>
+
+        <p> MAKE/MODEL : {{ v.make }}</p>
+        <p> Year: {{ v.year }} </p>
+        <p> {{ v.vin }} </p>
+        <h6>+++++++++++++++++++++++++++++++++++++++</h6>
+    </div>
+{% endfor %}
+</div>
+
+{% endblock %}}
