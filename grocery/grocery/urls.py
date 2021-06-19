@@ -20,8 +20,5 @@ from . import views
 from django.contrib import admin
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('cars/',include('cars.urls')),
-    path('user/',include('user.urls')),
-    path('',views.firstpage,name = 'firstpage')
-
+    path('',include('user.urls'))
 ]
