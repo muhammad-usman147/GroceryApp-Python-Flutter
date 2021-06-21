@@ -20,5 +20,6 @@ from . import views
 from django.contrib import admin
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',include('user.urls'))
+    path('',include('user.urls')),
+    path('store/',include('store.urls'))
 ]

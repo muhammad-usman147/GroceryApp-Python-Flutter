@@ -59,10 +59,19 @@ class ResponseApiUser(View):
                 'USER Email':item.email,
                 'password':item.password
             })
+        '''
+        x = {'f':[]}
+        names = User._meta.fields
+        for i in names:
+            x['f'].append(i.name)
+        print(x )
+        '''
         data = {
             'Total Rows':items_count, 
-            'Data View Column':datas
+            'Data View Column':datas,
+            
         }
+
         return JsonResponse(data)
 
 
