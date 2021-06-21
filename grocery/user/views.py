@@ -1,3 +1,4 @@
+from django import views
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.views import View
@@ -20,7 +21,6 @@ def UserForm(request):
 #rest api
 @method_decorator(csrf_exempt,name = 'dispatch')
 class ResponseApiUser(View):
-
 
     def post(self,request):
         data = json.loads(request.body.decode("utf-8"))
@@ -66,19 +66,13 @@ class ResponseApiUser(View):
         return JsonResponse(data)
 
 @method_decorator(csrf_exempt,name = 'dispatch')
-class ResponseGetApi(View):
-    def get(self,request):
+class UpdateApiUser(View):
+    def patch(self,request,user_id):
         data = json.loads(request.body.decode('utf-8'))
-        items_count = User.objects.count()
-        item_data = User.objects.all()
-        data = []
-        data.append({'User Count':items_count})
-        for item in item_data:
-            data.append({
-                'name':item.name,
-                'username':item.username,
-                'USER Email':item.email,
-                'password':item.password
-            })
+        item = User.objects.get(id = user_id)
+        item.username = data['username']
+        item.save()
+        data = {
+            'message_respose': f"username {data['username']}  updated"
+        }
         return JsonResponse(data)
-        
