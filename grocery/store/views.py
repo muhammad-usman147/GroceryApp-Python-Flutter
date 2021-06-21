@@ -21,3 +21,17 @@ class ResponseApiStore(View):
         
         return JsonResponse({"Response": f"{data.get('owner_username')} updated"})
 
+    def get(self,request,entry_point,value):
+        try:
+            send_data = {}
+            #data = json.loads(request.body.decode("utf-8"))
+            items = Owner_table.objects.get_or_create(**{entry_point : value})
+            names = Owner_table._meta.fields
+            Owner_table.objects.getattr
+            getattr()
+            for i in names:
+                send_data[i.name] = items.get(i.name)
+            print(send_data)
+        except Exception as e:
+            print(e)
+            
