@@ -5,6 +5,7 @@ from .views import ResponseApiUser, UpdateApiUser
 urlpatterns = [
     path('get-user/',ResponseApiUser.as_view()),
     path('get-all-data/',ResponseApiUser.as_view()),
-    path('updated_single_data/<int:user_id>',UpdateApiUser.as_view())
+    path('updated_single_data/<int:user_id>',UpdateApiUser.as_view()),
+    path('updated_data/',UpdateApiUser.as_view()),
 ]
 

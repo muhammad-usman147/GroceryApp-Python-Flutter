@@ -65,6 +65,8 @@ class ResponseApiUser(View):
         }
         return JsonResponse(data)
 
+
+#put and path request for USER data
 @method_decorator(csrf_exempt,name = 'dispatch')
 class UpdateApiUser(View):
     def patch(self,request,user_id):
@@ -73,6 +75,29 @@ class UpdateApiUser(View):
         item.username = data['username']
         item.save()
         data = {
-            'message_respose': f"username {data['username']}  updated"
+            'message_response': f"username {data['username']}  updated"
         }
         return JsonResponse(data)
+
+    
+    def put(self,request):
+        try:
+            
+            data = json.loads(request.body.decode('utf-8'))
+            us = data['old']['key_username']
+            
+            user_data = User.objects.get(username = us)
+            user_data.name = data['new']['key_name']
+            user_data.username = data['new']['key_username']
+            user_data.email = data['new']['key_email']
+            user_data.password = data['new']['key_password']
+            user_data.save()
+            message = {
+                'message_response': f"{data['old']['key_username']} updated."
+            }
+            return JsonResponse(message)
+        except Exception as e:
+            message = {
+                'message_ERROR_response': f"{e}"
+            }
+            return JsonResponse(message)
