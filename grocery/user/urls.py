@@ -7,5 +7,7 @@ urlpatterns = [
     path('get-all-data/',ResponseApiUser.as_view()),
     path('updated_single_data/<int:user_id>',UpdateApiUser.as_view()),
     path('updated_data/',UpdateApiUser.as_view()),
+
+
 ]
 

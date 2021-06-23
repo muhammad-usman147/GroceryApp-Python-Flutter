@@ -10,7 +10,7 @@ from django.views.decorators.csrf import  csrf_exempt
 
 @method_decorator(csrf_exempt,name = 'dispatch')
 class ResponseApiStore(View):
-    def put(self,request):
+    def post(self,request):
         data = json.loads(request.body.decode('utf-8'))
         names = Owner_table._meta.fields
         create_data = {}
@@ -39,4 +39,29 @@ class ResponseApiStore(View):
             return JsonResponse({"DATA":send_data})
         except Exception as e:
             return JsonResponse({"Message":e})
+    
+    def put(self,request):
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            us = data['old']['key_username']
+            store_owner_data = Owner_table.objects.get(owner_username = us)
             
+            
+            store_owner_data.owner_name = data['new']['owner_name']
+            store_owner_data.owner_username = data['new']['owner_username']
+            store_owner_data.ownner_email = data['new']['owner_email']
+            store_owner_data.owner_password = data['new']['owner_password']
+            store_owner_data.owner_store_name = data['new']['owner_store_name']
+            store_owner_data.owner_store_type = data['new']['owner_store_type']
+            store_owner_data.owner_store_password = data['new']['owner_store_password']
+
+            store_owner_data.save()
+            data = {
+                'message_response': f"username {data['old']['username']}  updated to {data['new']['username']}"
+            }
+            return JsonResponse(data)
+        except Exception as e:
+            data = {
+                'message_ERROR_response': f"{e}"
+            }
+            return JsonResponse(data)
