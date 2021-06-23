@@ -16,4 +16,5 @@ class Car(models.Model):
     owner = models.ForeignKey('Driver',
     on_delete= models.SET_NULL,
     null = True)
+    
 
