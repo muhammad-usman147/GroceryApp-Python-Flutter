@@ -69,6 +69,7 @@ class ResponseApiStore(View):
 
 @method_decorator(csrf_exempt, name = 'dispatch')
 class StoreTableApiResponse(View):
+    #add item store/add-store-item
     def post(self, request):
         try:
             data = json.loads(request.body.decode('utf-8'))
@@ -100,5 +101,30 @@ class StoreTableApiResponse(View):
             return JsonResponse(msg)
         except Exception as e:
             return JsonResponse({"Error":e})
+    #change or  update any item
+    #store/put-store-item
+    def put(self,request):
+        try:
+            data = json.loads(request.body.decode("utf-8"))
+            id = data.get('id')
+            item = Owner_Products.objects.get(pk = id)
 
-        
+            item.item_name = data.get('item_name')
+            item.item_picture_path = data.get("item_picture_path")
+            item.quantity = data.get('quantity')
+            item.price_to_sold = data.get('price_to_sold')
+            item.Quantity_type = data.get("Quantity_type")
+            item.save()
+            return JsonResponse({"Reponse":f'{data.get("item_name")} updated'})
+        except Exception as e:
+            return JsonResponse({"Response": e})
+    #to delete any store item
+    #store/delete-store-item ==> send {"id"= id_number}
+    def delete(self,request):
+        try:
+            data = json.loads(request.body.decode("utf-8"))
+            id = data.get('id')
+            x = Owner_Products.objects.get(pk = id).delete()
+            return JsonResponse({"Response":f"{id} delete"})
+        except Exception as e:
+            return JsonResponse({"Response":e})
