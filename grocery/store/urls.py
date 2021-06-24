@@ -9,4 +9,5 @@ urlpatterns = [
     path('get-store-item/',StoreTableApiResponse.as_view()),
     path("put-store-item/",StoreTableApiResponse.as_view()),
     path("delete-store-item/",StoreTableApiResponse.as_view())
+
 ]
