@@ -5,8 +5,10 @@ from user.models import User
 class Selling_history(models.Model):
     owner_product_id = models.ForeignKey('store.Owner_Products',
     on_delete=models.SET_NULL, null = True)
+
     owner_user_id = models.ForeignKey('user.User',
     on_delete=models.SET_NULL, 
     null = True)
+
     Quantity_sold = models.IntegerField()
-    Date = models.DateField()
+    Date = models.CharField(max_length=12)

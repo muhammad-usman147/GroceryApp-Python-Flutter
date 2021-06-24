@@ -13,8 +13,9 @@ class ResponseApiStore(View):
     def post(self,request):
         data = json.loads(request.body.decode('utf-8'))
         names = Owner_table._meta.fields
-        create_data = {}
+        create_data = {} 
         for i in names:
+            print(i.name)
             create_data[i.name] = data.get(i.name)
         print(create_data)
         X = Owner_table.objects.create(**create_data)
