@@ -116,6 +116,8 @@ class StoreTableApiResponse(View):
             item.price_to_sold = data.get('price_to_sold')
             item.Quantity_type = data.get("Quantity_type")
             item.save()
+            
+            
             return JsonResponse({"Reponse":f'{data.get("item_name")} updated'})
         except Exception as e:
             return JsonResponse({"Response": e})
