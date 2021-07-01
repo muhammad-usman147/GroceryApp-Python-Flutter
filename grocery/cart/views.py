@@ -1,7 +1,7 @@
 from json.decoder import JSONDecodeError
 from django.shortcuts import render
 from django.http.response import HttpResponse, JsonResponse
-from django.contrib.auth.models import Owner_Products
+from store.models import Owner_Products
 from .models import CartSystem
 from django.views import View
 import json
@@ -29,12 +29,18 @@ class ADDTOCART(View):
             post_data["product_id_id"]  = data.get("product_id_id")
             post_data["owner_id_id"]  = data.get("owner_id_id")
             post_data["user_id_id"]  = data.get("user_id_id")
-            print(post_data)
+            #print(post_data)
             
 
             #subtracting from product table
-            product_data = Owner_Products.objects.get()
-            x = CartSystem.objects.create(**post_data)
+            product_names = Owner_Products.objects.get(pk = post_data['product_id_id'])
+            #product_names = Owner_Products._meta.fields
+            print(product_names.item_name)
+            print(product_names.quantity)
+            print(product_names.price_to_sold)
+            print(product_names.Quantity_type)
+            print(product_names.owner_id_id)
+            #x = CartSystem.objects.create(**post_data)
             return JsonResponse({"msg":"ADDED to CART"})
         except Exception as e:
             return JsonResponse({"msg":f"{e}"})   
