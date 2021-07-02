@@ -44,8 +44,6 @@ class ADDTOCART(View):
             if post_data['quantity'] > product_names.quantity:
                 return JsonResponse({"error":"Quantity out of range"})
             
-            product_names.quantity = product_names.quantity - post_data['quantity']
-            product_names.save()
             x = CartSystem.objects.create(**post_data)
             return JsonResponse({"msg":"ADDED to CART"})
         except Exception as e:
@@ -80,6 +78,12 @@ class ADDTOCART(View):
         try:
             item = json.loads(request.body.decode('utf-8'))
             get_filtered_data = CartSystem.objects.get(order_id = item.get("order_id"))
+            #---
+            #get = CartSystem.objects.get(order_id=item.get("order_id"))
+            products_name = Owner_Products.objects.get(pk = item.get("product_id_id"))
+            if item.get("quantity") > products_name.quantity:
+                return JsonResponse({"error": " Quantity out of range"})
+
             names = CartSystem._meta.fields
             print([i.name for i in names])
             get_filtered_data.quantity = item.get("quantity")
@@ -92,9 +96,9 @@ class ADDTOCART(View):
             get_filtered_data.owner_id_id=item.get("owner_id_id")
             get_filtered_data.product_id_id=item.get("product_id_id")
             get_filtered_data.user_id_id= item.get("user_id_id")
-            get_filtered_data.save()
-            #---
-            get = CartSystem.objects.get(order_id=item.get("order_id"))
+            
+
+            
             send_data = []
             send_data.append({
                     "quantity":item.get("quantity"),
@@ -108,7 +112,18 @@ class ADDTOCART(View):
                     "product_id_id":item.get("product_id_id"),
                     "user_id_id":item.get("user_id_id"),
                 })
+            #get_filtered_data.save()
             return JsonResponse({"response":send_data})
                 
         except Exception as e:
             return JsonResponse({"response":str(e)})
+
+
+
+
+
+#confirm cart button
+#subtract from the prodcut
+@method_decorator(csrf_exempt,name = 'dispatch')
+class UpdateCartToDGut(View):
+    pass
