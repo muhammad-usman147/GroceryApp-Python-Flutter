@@ -30,17 +30,23 @@ class ADDTOCART(View):
             post_data["owner_id_id"]  = data.get("owner_id_id")
             post_data["user_id_id"]  = data.get("user_id_id")
             #print(post_data)
-            
-
             #subtracting from product table
             product_names = Owner_Products.objects.get(pk = post_data['product_id_id'])
+
+
+
             #product_names = Owner_Products._meta.fields
             print(product_names.item_name)
             print(product_names.quantity)
             print(product_names.price_to_sold)
             print(product_names.Quantity_type)
             print(product_names.owner_id_id)
-            #x = CartSystem.objects.create(**post_data)
+            if post_data['quantity'] > product_names.quantity:
+                return JsonResponse({"error":"Quantity out of range"})
+            
+            product_names.quantity = product_names.quantity - post_data['quantity']
+            product_names.save()
+            x = CartSystem.objects.create(**post_data)
             return JsonResponse({"msg":"ADDED to CART"})
         except Exception as e:
             return JsonResponse({"msg":f"{e}"})   
