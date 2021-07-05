@@ -2,6 +2,7 @@ from json.decoder import JSONDecodeError
 from django.shortcuts import render
 from django.http.response import HttpResponse, JsonResponse
 from store.models import Owner_Products
+from user.models import User
 from .models import CartSystem
 from django.views import View
 import json
@@ -122,8 +123,55 @@ class ADDTOCART(View):
 
 
 
-#confirm cart button
-#subtract from the prodcut
+
 @method_decorator(csrf_exempt,name = 'dispatch')
 class UpdateCartToDGut(View):
-    pass
+    # cart-confirm/
+    #confirm cart button
+    #subtract from the prodcut
+    def post(self,request):
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            product_id = data.get('product_id')
+            product_quantity = data.get("quantity")
+            item_to_update = Owner_Products.objects.get(pk  = product_id)
+            item_to_update.quantity -= product_quantity
+            item_to_update.save()
+            return JsonResponse({"response":True,
+            'msg':"Cart comfirmed"})
+        except Exception as e:
+            return JsonResponse({"reponse":False,
+            'msg':'Something Went Wrong',
+            'error':str(e)})
+
+    #get cart details by id
+    def get(self,request,order_id):
+        try:
+            item = CartSystem.objects.get(order_id,order_id)
+  
+            send_data = []
+            
+            #get user email and name
+            user = User
+            send_data.append({
+                    "quantity":item.quantity,
+                    "address":item.address,
+                    "date":item.date,
+                    "payment_method":item.payment_method,
+                    "card_payment":item.card_payment,
+                    "delivery_status":item.delivery_status,
+                    "order_id":item.order_id,
+                    "owner_id_id":item.owner_id_id,
+                    "product_id_id":item.product_id_id,
+                    "user_id_id":item.user_id_id,
+                })
+            return JsonResponse({"cart_data":send_data})
+            
+        except Exception as e:
+            return JsonResponse({'repose':True
+                ,"msg":f"{e}"})  
+        except Exception as e:
+            return JsonResponse({"respose":False,
+            'error':str(e)})
+
+        
