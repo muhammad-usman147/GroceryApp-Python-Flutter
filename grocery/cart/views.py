@@ -131,12 +131,19 @@ class UpdateCartToDGut(View):
     #subtract from the prodcut
     def post(self,request):
         try:
+
             data = json.loads(request.body.decode('utf-8'))
             product_id = data.get('product_id')
             product_quantity = data.get("quantity")
             item_to_update = Owner_Products.objects.get(pk  = product_id)
             item_to_update.quantity -= product_quantity
-            item_to_update.save()
+            cart_item = CartSystem.objects.get(order_id = data.get('order_id'))
+            cart_item.delivery_status = data.get('delivery_status')
+            #biker_id = []
+            #cart_item.save()
+            #item_to_update.save()
+            print("-"*30,item_to_update.quantity,'-'*30)
+            print("-"*30,cart_item.delivery_status,'-'*30)
             return JsonResponse({"response":True,
             'msg':"Cart comfirmed"})
         except Exception as e:
@@ -152,7 +159,6 @@ class UpdateCartToDGut(View):
             send_data = []
             
             #get user email and name
-            user = User
             send_data.append({
                     "quantity":item.quantity,
                     "address":item.address,
@@ -168,10 +174,7 @@ class UpdateCartToDGut(View):
             return JsonResponse({"cart_data":send_data})
             
         except Exception as e:
-            return JsonResponse({'repose':True
-                ,"msg":f"{e}"})  
-        except Exception as e:
-            return JsonResponse({"respose":False,
+            return JsonResponse({"response":False,
             'error':str(e)})
 
         
