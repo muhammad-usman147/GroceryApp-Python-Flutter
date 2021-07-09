@@ -10,6 +10,7 @@ from .models import Biker_Profile
 @method_decorator(csrf_exempt, name = 'dispatch')
 class BIKER(View):
     #add-biker-info
+    #error here
     def post(self, request):
         try:
             data = json.loads(request.body.decode('utf-8'))

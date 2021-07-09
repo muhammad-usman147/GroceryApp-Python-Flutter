@@ -4,10 +4,12 @@ from django.http.response import HttpResponse, JsonResponse
 from store.models import Owner_Products
 from user.models import User
 from .models import CartSystem
+from biker.models import Biker_Profile, OrderBiker
 from django.views import View
 import json
 from django.utils.decorators import  method_decorator
 from django.views.decorators.csrf import csrf_exempt
+import numpy as np
 # Create your views here.
 @method_decorator(csrf_exempt,name = 'dispatch')
 class ADDTOCART(View):
@@ -134,12 +136,26 @@ class UpdateCartToDGut(View):
 
             data = json.loads(request.body.decode('utf-8'))
             product_id = data.get('product_id')
+            
             product_quantity = data.get("quantity")
             item_to_update = Owner_Products.objects.get(pk  = product_id)
             item_to_update.quantity -= product_quantity
-            cart_item = CartSystem.objects.get(order_id = data.get('order_id'))
-            cart_item.delivery_status = data.get('delivery_status')
-            #biker_id = []
+            o_id = data.get('order_id')
+            cart_item = CartSystem.objects.get(order_id = o_id)
+            cart_item.delivery_status = data.get('delivery_status') #should be in-progress
+            biker = Biker_Profile.objects.values('pk')
+            biker_id = [i[0] for i in biker]
+
+
+            ids = biker_id[np.random.randint(0,len(biker_id))]
+            
+            
+            order = {
+                'delivery_status':'in-progress',
+                'biker_id_id':ids,
+                'order_id_to_biker_id': o_id
+            }
+            #_ = OrderBiker.objects.create(**order)
             #cart_item.save()
             #item_to_update.save()
             print("-"*30,item_to_update.quantity,'-'*30)
