@@ -115,7 +115,7 @@ class ADDTOCART(View):
                     "product_id_id":item.get("product_id_id"),
                     "user_id_id":item.get("user_id_id"),
                 })
-            #get_filtered_data.save()
+            get_filtered_data.save()
             return JsonResponse({"response":send_data})
                 
         except Exception as e:
@@ -144,7 +144,7 @@ class UpdateCartToDGut(View):
             cart_item = CartSystem.objects.get(order_id = o_id)
             cart_item.delivery_status = data.get('delivery_status') #should be in-progress
             
-            biker = Biker_Profile.objects.values('pk')
+            biker = Biker_Profile.objects.values_list('pk')
             biker_id = [i[0] for i in biker]
 
 
@@ -154,13 +154,17 @@ class UpdateCartToDGut(View):
             order = {
                 'delivery_status':'in-progress',
                 'biker_id_id':ids,
-                'order_id_to_biker_id': o_id,
+                'order_id_to_biker_id': cart_item.pk,
                 'address':data.get("address"),
                 'contact': data.get("contact")
             }
+            print(order)
             _ = OrderBiker.objects.create(**order)
+            print("-"*10,"order updated",'-'*10)
             cart_item.save()
+            print("-"*10," cart added",'-'*10)
             item_to_update.save()
+            print("-"*10,"item updated",'-'*10)
             print("-"*30,item_to_update.quantity,'-'*30)
             print("-"*30,cart_item.delivery_status,'-'*30)
             return JsonResponse({"response":True,
@@ -168,7 +172,7 @@ class UpdateCartToDGut(View):
         except Exception as e:
             return JsonResponse({"reponse":False,
             'msg':'Something Went Wrong',
-            'error':str(e)})
+            'error':e})
 
     #get cart details by id
     def get(self,request,order_id):
