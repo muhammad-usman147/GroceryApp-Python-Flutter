@@ -143,6 +143,7 @@ class UpdateCartToDGut(View):
             o_id = data.get('order_id')
             cart_item = CartSystem.objects.get(order_id = o_id)
             cart_item.delivery_status = data.get('delivery_status') #should be in-progress
+            
             biker = Biker_Profile.objects.values('pk')
             biker_id = [i[0] for i in biker]
 
@@ -153,11 +154,13 @@ class UpdateCartToDGut(View):
             order = {
                 'delivery_status':'in-progress',
                 'biker_id_id':ids,
-                'order_id_to_biker_id': o_id
+                'order_id_to_biker_id': o_id,
+                'address':data.get("address"),
+                'contact': data.get("contact")
             }
-            #_ = OrderBiker.objects.create(**order)
-            #cart_item.save()
-            #item_to_update.save()
+            _ = OrderBiker.objects.create(**order)
+            cart_item.save()
+            item_to_update.save()
             print("-"*30,item_to_update.quantity,'-'*30)
             print("-"*30,cart_item.delivery_status,'-'*30)
             return JsonResponse({"response":True,

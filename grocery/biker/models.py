@@ -17,4 +17,5 @@ class OrderBiker(models.Model):
     on_delete=models.SET_NULL,
     null= True)
     delivery_status = models.CharField(max_length=100)
-    
+    address = models.CharField(max_length=100)
+    contact = models.BigIntegerField()
