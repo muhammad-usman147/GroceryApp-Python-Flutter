@@ -1,4 +1,6 @@
 import json
+from django.db.models.fields import BooleanField
+from django.http import request
 from django.shortcuts import render
 from django.http.response import JsonResponse
 from django.views import View
@@ -64,7 +66,36 @@ class BIKER(View):
     '''
     put function to make the order now-delivering / in-delivering
     from table  cart-system and biker-order
-
+    This function is used by the biker, to make the 
+    order column delivery_status
+    
     '''
-    def put(request):
-        pass
+    # put-delivery-status
+    def put(self,request):
+        try:
+            data = json.loads(request.body.decode("utf-8"))
+            status = data.get('delivery_status')
+            cart_system = CartSystem.objects.get(pk = data.get("cart_id"))
+            orderbiker = OrderBiker.objects.get(pk = data.get('id'))
+
+            old_status = orderbiker.delivery_status
+            #--- updating the cart
+            cart_system.delivery_status = status
+            cart_system.save()
+            
+            orderbiker.delivery_status = status
+
+            orderbiker.save()
+            #print(data.get('cart_id'))
+            #print(cart_system.order_id)
+            #print(orderbiker.delivery_status)
+            #print(cart_system.delivery_staus)
+            msg = {"msg":f"status updated from {old_status} to {status}",
+            'reponse':200}
+            return JsonResponse(msg)
+
+        except Exception as e:
+            msg = {"msg":f"status updated from {old_status} to {status}",
+            'response':500}
+            return JsonResponse(msg)
+            
