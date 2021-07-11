@@ -4,7 +4,9 @@ from django.http.response import JsonResponse
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from .models import Biker_Profile
+from .models import Biker_Profile, OrderBiker
+from cart.models import CartSystem
+from user.models import User
 # Create your views here.
 
 @method_decorator(csrf_exempt, name = 'dispatch')
@@ -29,12 +31,40 @@ class BIKER(View):
             return JsonResponse(response)
 
 
-    '''
-    #GET ALL THROUGH DELIVERY STATUS
+    
+    #GET ALL THROUGH DELIVERY STATUS using delivery condition
+    #get-orders-status/
     def get(self,request,status):
         try:
-            data = Biker_Profile.objects.get(delivery_status = status)
+            all_data = OrderBiker.objects.filter(delivery_status = status)
             
+            msg = []
+            for data in all_data:
+                x = CartSystem.objects.get(pk =data.order_id_to_biker_id )
+                profile = Biker_Profile.objects.get(pk = data.biker_id_id)
+                msg.append({
+                    "id":data.pk,
+                    'user name': User.objects.get(pk = x.user_id_id).name,
+                    'delivery_status':data.delivery_status,
+                    'address':data.address,
+                    'contact':data.contact,
+                    'biker_data':{
+                     'order_id':   x.order_id,
+                     'name': profile.name,
+                     'contact':profile.number
+                     
+                    }
+                })
+
+            information = {"msg":msg}
+            return JsonResponse(information)
         except Exception as e:
-            pass 
+            return JsonResponse({"msg":str(e)})
+
     '''
+    put function to make the order now-delivering / in-delivering
+    from table  cart-system and biker-order
+
+    '''
+    def put(request):
+        pass

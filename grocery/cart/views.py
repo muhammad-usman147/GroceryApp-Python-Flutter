@@ -143,7 +143,6 @@ class UpdateCartToDGut(View):
             o_id = data.get('order_id')
             cart_item = CartSystem.objects.get(order_id = o_id)
             cart_item.delivery_status = data.get('delivery_status') #should be in-progress
-            
             biker = Biker_Profile.objects.values_list('pk')
             biker_id = [i[0] for i in biker]
 
