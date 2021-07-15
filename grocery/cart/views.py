@@ -13,8 +13,8 @@ import numpy as np
 # Create your views here.
 @method_decorator(csrf_exempt,name = 'dispatch')
 class ADDTOCART(View):
-    #add-to-cart/
-    def post(self,request):
+    
+    def old_word(self,request):
         try:
             data = json.loads(request.body.decode('utf-8'))
 
@@ -50,7 +50,66 @@ class ADDTOCART(View):
             x = CartSystem.objects.create(**post_data)
             return JsonResponse({"msg":"ADDED to CART"})
         except Exception as e:
-            return JsonResponse({"msg":f"{e}"})   
+            return JsonResponse({"msg":f"{e}"})
+
+    #add-to-cart/
+    def post(self,request):
+        data = json.loads(request.body.decode('utf-8'))
+        check_order_id = CartSystem.objects.filter(order_id = data.get('order_id'))
+        if not check_order_id:
+            #if order_id not exists, means new cart
+            try:
+                post_data = {}
+                names = CartSystem._meta.fields
+                for i in names:
+                    post_data[i.name] = data.get(i.name)
+                post_data['product_id_id'] = data.get('product_id_id')
+                post_data['owner_id_id'] = data.get('owner_id_id')
+                post_data['user_id_id'] = data.get('user_id_id')
+
+                #checking quentity
+                product_names = Owner_Products.objects.get(pk = post_data['product_id_id'])
+                '''
+                print(product_names.item_name)
+                print(product_names.quantity)
+                print(product_names.price_to_sold)
+                print(product_names.Quantity_type)
+                print(product_names.owner_id_id)
+                '''
+                if post_data['quantity'] > product_names.quantity:
+                    return JsonResponse({"error":"Quantity out of range"})
+                _ = CartSystem.objects.create(**post_data)
+                del _ 
+                return JsonResponse({"msg":"ADDED TO CART"})
+            except Exception as e:
+                return JsonResponse({"msg":f"{e}"})
+            
+        else:
+            #if order_id exists
+            check_order_product = CartSystem.objects.filter(order_id = data.get('order_id')).filter(product_id_id = data.get('product_id_id'))
+            
+            if not check_order_product:
+                #product does not exist for that particular order_id
+                try:
+                    post_data = {}
+                    names = CartSystem._meta.fields
+                    for i in names:
+                        post_data[i.name] = data.get(i.name)
+                    post_data["product_id_id"]  = data.get("product_id_id")
+                    post_data["owner_id_id"]  = data.get("owner_id_id")
+                    post_data["user_id_id"]  = data.get("user_id_id") 
+                    product_names = Owner_Products.objects.get(pk = post_data['product_id_id'])
+
+                    if post_data['quantity'] > product_names.quantity:
+                        return JsonResponse({"error":"Quantity out of range"})
+                    _ = CartSystem.objects.create(**post_data)
+                    return JsonResponse({"msg":"ADDED to CART"})
+                except Exception as e:
+                    return JsonResponse({"msg":f'e'})
+            else:
+                return JsonResponse({"msg":"ORDER Already Exists"})
+                #product exist for that particular order_id
+                
     #get-all-to-cart/
     def get(self,request):
         try:
@@ -198,5 +257,3 @@ class UpdateCartToDGut(View):
         except Exception as e:
             return JsonResponse({"response":False,
             'error':str(e)})
-
-        
