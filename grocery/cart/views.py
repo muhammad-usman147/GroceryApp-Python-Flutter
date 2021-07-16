@@ -92,6 +92,8 @@ class ADDTOCART(View):
                     "product_id_id":item.product_id_id,
                     "user_id_id":item.user_id_id,
                 })
+            
+            
             return JsonResponse({"cart_data":send_data})
             
         except Exception as e:
@@ -205,14 +207,15 @@ class UpdateCartToDGut(View):
             'error':e})
 
     #get cart details by id
-    def get(self,request,order_id):
+    #get-user-cart
+    def get(self,request,id):
         try:
-            item = CartSystem.objects.get(order_id,order_id)
-  
+            #data = json.loads(request.body.decode('utf-8'))
+
+            get_data = CartSystem.objects.filter(order_id = id)
             send_data = []
-            
-            #get user email and name
-            send_data.append({
+            for item in get_data:
+                send_data.append({
                     "quantity":item.quantity,
                     "address":item.address,
                     "date":item.date,
@@ -227,5 +230,4 @@ class UpdateCartToDGut(View):
             return JsonResponse({"cart_data":send_data})
             
         except Exception as e:
-            return JsonResponse({"response":False,
-            'error':str(e)})
+            return JsonResponse({"msg":f"{e}"})  
