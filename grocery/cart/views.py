@@ -13,45 +13,7 @@ import numpy as np
 # Create your views here.
 @method_decorator(csrf_exempt,name = 'dispatch')
 class ADDTOCART(View):
-    
-    def old_word(self,request):
-        try:
-            data = json.loads(request.body.decode('utf-8'))
-
-            get_data = CartSystem.objects.all()
-
-            order_id = []
-            for i in get_data:
-                order_id.append(i.order_id)
-            if data.get('order_id') in order_id:
-                return JsonResponse({"msg":"order id exists"})
-            post_data = {}
-            names = CartSystem._meta.fields
-            for i in names:
-                post_data[i.name] = data.get(i.name)
-            post_data["product_id_id"]  = data.get("product_id_id")
-            post_data["owner_id_id"]  = data.get("owner_id_id")
-            post_data["user_id_id"]  = data.get("user_id_id")
-            #print(post_data)
-            #subtracting from product table
-            product_names = Owner_Products.objects.get(pk = post_data['product_id_id'])
-
-
-
-            #product_names = Owner_Products._meta.fields
-            print(product_names.item_name)
-            print(product_names.quantity)
-            print(product_names.price_to_sold)
-            print(product_names.Quantity_type)
-            print(product_names.owner_id_id)
-            if post_data['quantity'] > product_names.quantity:
-                return JsonResponse({"error":"Quantity out of range"})
-            
-            x = CartSystem.objects.create(**post_data)
-            return JsonResponse({"msg":"ADDED to CART"})
-        except Exception as e:
-            return JsonResponse({"msg":f"{e}"})
-
+   
     #add-to-cart/
     def post(self,request):
         data = json.loads(request.body.decode('utf-8'))
@@ -181,8 +143,18 @@ class ADDTOCART(View):
             return JsonResponse({"response":str(e)})
 
 
-
-
+    #to delete an item from the cart
+    #delete-item-from-cart/
+    def delete(self,request):
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            order_id = data.get("order_id")
+            product_id = data.get("product_id_id")
+            _ = CartSystem.objects.filter(order_id = order_id).filter(product_id_id = product_id).delete()
+            msg = {"msg":f"removed for order id {order_id}"}
+            return JsonResponse(msg)
+        except Exception as e:
+            msg = {"error":f"{e}"}
 
 
 @method_decorator(csrf_exempt,name = 'dispatch')
