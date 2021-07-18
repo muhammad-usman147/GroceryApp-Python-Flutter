@@ -9,13 +9,6 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
-def UserForm(request):
-    X = User.objects.create(name = 'usman shakeel',
-    username = 'usman808',
-    email = 'ushakeel909@gmail.com',
-    password = 'passw')
-
-    return HttpResponse("This is user form page")
 
 
 #rest api
@@ -110,3 +103,25 @@ class UpdateApiUser(View):
                 'message_ERROR_response': f"{e}"
             }
             return JsonResponse(message)
+
+
+@method_decorator(csrf_exempt,name = 'dispatch')
+class Auth(View):
+    #login api
+    #user-login-auth
+    def get(self,request,username,password):
+        auth = User.objects.get(username = username,
+        password = password)
+        if not auth: #if true, means it is empty, no user exists
+            return JsonResponse({"msg":False})
+        else:
+            msg = {}
+            for i in auth:
+                msg = {'id' : i.pk,
+                    "name":i.name,
+                    "username":i.username,
+                    
+                }
+            return JsonResponse({ "msg" :True,
+            "meta_data":msg}
+            )
