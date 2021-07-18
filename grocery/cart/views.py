@@ -206,13 +206,13 @@ class UpdateCartToDGut(View):
             'msg':'Something Went Wrong',
             'error':e})
 
-    #get cart details by id
+    #get cart details by id having delivery_Status = pending
     #get-user-cart
     def get(self,request,id):
         try:
             #data = json.loads(request.body.decode('utf-8'))
 
-            get_data = CartSystem.objects.filter(order_id = id)
+            get_data = CartSystem.objects.filter(order_id = id),filter(delivery_status = 'pending')
             send_data = []
             for item in get_data:
                 send_data.append({
@@ -231,3 +231,17 @@ class UpdateCartToDGut(View):
             
         except Exception as e:
             return JsonResponse({"msg":f"{e}"})  
+
+
+@method_decorator(csrf_exempt, name = 'dispatch')
+class Counter(View):
+    #to get the cart count for specific user
+    #get-count-cart
+    def get(self,request,order_id):
+        try:
+            x = CartSystem.objects.filter(order_id = order_id).filter(delivery_status ='pending').count()
+            return JsonResponse({"msg":f'{x}'})
+        except Exception as e:
+            return JsonResponse({"error":f"{e}"})
+
+        
