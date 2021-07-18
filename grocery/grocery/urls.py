@@ -20,7 +20,7 @@ from . import views
 from django.contrib import admin
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',include('user.urls')),
+    path('user/',include('user.urls')),
     path('store/',include('store.urls')),
     path('cart/',include('cart.urls')),
     path('biker/',include('biker.urls'))

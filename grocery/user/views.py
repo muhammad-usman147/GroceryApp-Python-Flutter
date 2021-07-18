@@ -110,18 +110,21 @@ class Auth(View):
     #login api
     #user-login-auth
     def get(self,request,username,password):
-        auth = User.objects.get(username = username,
-        password = password)
-        if not auth: #if true, means it is empty, no user exists
-            return JsonResponse({"msg":False})
-        else:
-            msg = {}
-            for i in auth:
-                msg = {'id' : i.pk,
-                    "name":i.name,
-                    "username":i.username,
-                    
-                }
-            return JsonResponse({ "msg" :True,
-            "meta_data":msg}
-            )
+        try:
+            auth = User.objects.filter(username = username,
+            password = password)
+            if not auth: #if true, means it is empty, no user exists
+                return JsonResponse({"msg":False})
+            else:
+                msg = {}
+                for i in auth:
+                    msg = {'id' : i.pk,
+                        "name":i.name,
+                        "username":i.username,
+                        
+                    }
+                return JsonResponse({ "msg" :True,
+                "meta_data":msg}
+                )
+        except Exception  as e:
+            return JsonResponse({"error":f"{e}"})        
