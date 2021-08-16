@@ -212,7 +212,7 @@ class UpdateCartToDGut(View):
         try:
             #data = json.loads(request.body.decode('utf-8'))
 
-            get_data = CartSystem.objects.filter(order_id = id),filter(delivery_status = 'pending')
+            get_data = CartSystem.objects.filter(order_id = id).filter(delivery_status = 'pending')
             send_data = []
             for item in get_data:
                 send_data.append({
